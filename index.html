@@ -109,7 +109,7 @@ canvas.reelCanvas{width:100%;height:150px;display:block;border-radius:10px;backg
 <div id="prizeModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modalCard">
     <div class="modalHead">
-      <h3 id="modalTitle">🎉 ¡Premio desbloqueado!</h3>
+      <h3 id="modalTitle">📸 Recordá sacar captura de este comprobante para reclamar</h3>
       <span id="closeModal" class="closeX">✖</span>
     </div>
     <div class="modalBody">
@@ -117,7 +117,7 @@ canvas.reelCanvas{width:100%;height:150px;display:block;border-radius:10px;backg
       <div class="row"><span class="k">Código</span><span class="v" id="mCode">—</span></div>
       <div class="row"><span class="k">Fecha/Hora</span><span class="v" id="mTs">—</span></div>
       <div class="actions">
-        <button id="mClaim" class="btn ok">📲 Reclamá tu premio ahora por WhatsApp</button>
+        <button id="mClaim" class="btn ok">📲 Reclamar por WhatsApp</button>
         <button id="mClose" class="btn ghost">Cerrar</button>
       </div>
     </div>
@@ -167,7 +167,7 @@ canvas.reelCanvas{width:100%;height:150px;display:block;border-radius:10px;backg
             </div>
             <div>
               <h2 id="title">Tenés 1 giro disponible</h2>
-              <p class="muted" id="subtitle">Girás por un beneficio exclusivo que se acredita con tu <b>próxima carga mínima</b>.</p>
+              <p class="muted" id="subtitle">Los premios se acreditan con tu <b>próxima carga mínima</b>.</p>
             </div>
           </div>
         </div>
@@ -196,12 +196,12 @@ canvas.reelCanvas{width:100%;height:150px;display:block;border-radius:10px;backg
 const PLATFORM_URL = "https://www.bet-300.pw/";
 
 const PC_CONFIG = {
-  1: { key:"pc1", label:"PC 1", whatsapp:"5492235181171" },
-  2: { key:"pc2", label:"PC 2", whatsapp:"5491171722213" },
-  3: { key:"pc3", label:"PC 3", whatsapp:"5491150148520" },
-  4: { key:"pc4", label:"PC 4", whatsapp:"5491155264720" },
-  5: { key:"pc5", label:"PC 5", whatsapp:"5491132470700" },
-  6: { key:"pc6", label:"PC 6", whatsapp:"5491133624597" }
+  1: { key:"pc1", label:"PC 1", whatsapp:"5491162363539" },
+  2: { key:"pc2", label:"PC 2", whatsapp:"5491162386591" },
+  3: { key:"pc3", label:"PC 3", whatsapp:"5491162386592" },
+  4: { key:"pc4", label:"PC 4", whatsapp:"5491162386593" },
+  5: { key:"pc5", label:"PC 5", whatsapp:"5491162386594" },
+  6: { key:"pc6", label:"PC 6", whatsapp:"5491162386595" }
 };
 
 const params = new URLSearchParams(location.search);
@@ -456,9 +456,9 @@ prizeModal.addEventListener('click',e=>{ if(e.target===prizeModal) closeModal();
 
 function money(n){ return "$"+n.toLocaleString("es-AR"); }
 function whatsappText(prizeLabel){
-  const code = localStorage.getItem(k('code')) || '(SIN-COD)';
-  const ts   = localStorage.getItem(k('ts'))   || tsString();
-  return `Hola, desbloqueé ${prizeLabel} en el Slot BET300 (${activePC.label}) y quiero reclamar mi beneficio exclusivo con la próxima carga. Código: ${code} · ${ts}`;
+  const code = localStorage.getItem('slot_code') || '(SIN-COD)';
+  const ts   = localStorage.getItem('slot_ts')   || tsString();
+  return `Hola, gané ${prizeLabel} en el Slot BET300 (${activePC.label}) y quiero reclamarlo con mi próxima carga. Código: ${code} · ${ts}`;
 }
 function confettiBurst(){
   const el=document.getElementById('confetti'); el.innerHTML='';
@@ -488,9 +488,8 @@ function restorePrizeIfAny(){
     const p=JSON.parse(saved);
     const code = localStorage.getItem(k('code')) || '—';
     const ts   = localStorage.getItem(k('ts'))   || tsString();
-    badge.textContent=money(p.value);
-    title.textContent="🎉 ¡Premio desbloqueado!";
-    subtitle.innerHTML=`Ganaste un <b>beneficio exclusivo de ${money(p.value)}</b>. Reclamalo con tu próxima carga.`;
+    badge.textContent=money(p.value); title.textContent="🎉 ¡Premio obtenido!";
+    subtitle.innerHTML=`Recibís <b>${money(p.value)} extra</b> con tu próxima carga.`;
     stampEl.textContent=`Código: ${code} · ${ts}`;
     claimBtn.disabled=false; spinBtn.disabled=true;
     const msg=whatsappText(money(p.value));
@@ -504,7 +503,7 @@ function scheduleMidnightReset(){
     ['done','prize','code','ts'].forEach(x=>localStorage.removeItem(k(x)));
     localStorage.setItem(k('date'),todayKey());
     spinBtn.disabled=false; badge.textContent='-'; title.textContent='Tenés 1 giro disponible';
-    subtitle.innerHTML='Girás por un beneficio exclusivo que se acredita con tu <b>próxima carga mínima</b>.';
+    subtitle.innerHTML='Los premios se acreditan con tu <b>próxima carga mínima</b>.';
     stampEl.textContent=''; resultLine.textContent='—'; hintEl.textContent='1 giro por día y por dispositivo 📱';
   }, midnight.getTime()-now.getTime());
 }
@@ -558,45 +557,23 @@ function evaluateAllWins(grid){
     {name:"Diag ↘", r:[grid.r1.top,    grid.r2.center, grid.r3.bottom]},
     {name:"Diag ↗", r:[grid.r1.bottom, grid.r2.center, grid.r3.top]},
   ];
-
-  const triplePrizes = {
-    "🍒": 3000,
-    "🔔": 4000,
-    "⭐": 5000,
-    "7": 6000,
-    "💎": 7000,
-    "BET300": 10000
-  };
-
-  const pairPrizes = {
-    "🍒": 1500,
-    "🔔": 2000,
-    "⭐": 2500,
-    "7": 3000,
-    "💎": 3500,
-    "BET300": 5000
-  };
-
   const details=[]; let total=0;
   for(const L of lines){
     const [a,b,c] = L.r;
     if (a!==b) continue;
-
     if (a===b && b===c){
       const kind = (a==="BET300") ? "jackpot" : "triple";
-      const prize = triplePrizes[a] || 5000;
+      const prize = (kind==="jackpot") ? 10000 : 5000;
       total += prize;
-      details.push({line:L.name, kind, prize, symbols:[a,b,c], symbol:a});
+      details.push({line:L.name, kind, prize, symbols:[a,b,c]});
       continue;
     }
-
     if (a===b && c!==b){
-      const prize = pairPrizes[a] || 2000;
+      const prize=2000;
       total += prize;
-      details.push({line:L.name, kind:"pair", prize, symbols:[a,b,c], symbol:a});
+      details.push({line:L.name, kind:"pair", prize, symbols:[a,b,c]});
     }
   }
-
   if(details.length===0) return { total:1000, details:[], kind:"none" };
   const hasJackpot = details.some(d=>d.kind==="jackpot");
   const hasTriple  = details.some(d=>d.kind==="triple");
@@ -670,16 +647,16 @@ async function onStop(){
 
   badge.textContent = prizeLabel;
   title.textContent =
-    (verdict.kind==='jackpot') ? '🏆 ¡JACKPOT BET300!' :
-    (verdict.kind==='triple')  ? '🎉 ¡Combinación ganadora!' :
-    (verdict.kind==='pair')    ? '✨ ¡Premio parcial!' :
+    (verdict.kind==='jackpot') ? '🏆 ¡JACKPOT $10.000!' :
+    (verdict.kind==='triple')  ? '🎉 ¡3 iguales!' :
+    (verdict.kind==='pair')    ? '✨ ¡2 iguales!' :
                                  '🎁 Premio garantizado';
 
   subtitle.innerHTML =
-    (verdict.kind==='jackpot') ? `🔥 Ganaste un <b>beneficio exclusivo de ${prizeLabel}</b>. Reclamalo con tu próxima carga.` :
-    (verdict.kind==='triple')  ? `🎉 Combinación completa. Obtuviste <b>${prizeLabel}</b> para reclamar.` :
-    (verdict.kind==='pair')    ? `✨ Buena jugada. Te llevás <b>${prizeLabel}</b> como premio parcial.` :
-                                 `🎁 Tenés un premio garantizado de <b>${prizeLabel}</b> para reclamar.`;
+    (verdict.kind==='jackpot') ? `🎉 ¡Te llevás el premio mayor! Recibís <b>${prizeLabel} extra</b> con tu próxima carga.` :
+    (verdict.kind==='triple')  ? `🔥 Tres iguales. Recibís <b>${prizeLabel} extra</b> con tu próxima carga.` :
+    (verdict.kind==='pair')    ? `✨ Dos iguales desde la primera columna. Recibís <b>${prizeLabel} extra</b> con tu próxima carga.` :
+                                 `Gracias por jugar. Recibís <b>${prizeLabel} extra</b> con tu próxima carga.`;
 
   stampEl.textContent = `Código: ${code} · ${ts}`;
   const msg = whatsappText(prizeLabel);
@@ -688,7 +665,7 @@ async function onStop(){
 
   const centersNow = [grid.r1.center, grid.r2.center, grid.r3.center];
   const linesTxt = (verdict.details.length>0)
-    ? verdict.details.map(d=>`${d.kind==='jackpot'?'JACKPOT':d.kind==='triple'?'3 iguales':'2 iguales'} · ${d.symbol} · Línea: ${d.line} · ${money(d.prize)}`).join(' • ')
+    ? verdict.details.map(d=>`${d.kind==='jackpot'?'JACKPOT':d.kind==='triple'?'3 iguales':'2 iguales'} · Línea: ${d.line}`).join(' • ')
     : 'Sin acierto';
   const symTxt = `Símbolos: ${centersNow.join(' | ')}`;
   resultLine.textContent = `${linesTxt} • ${symTxt}`;
@@ -709,28 +686,11 @@ async function onStop(){
     }
   });
 
-  if(soundOn){
-    AudioKit.win(verdict.kind);
-    if(verdict.kind==='jackpot'){
-      setTimeout(()=>AudioKit.win('jackpot'), 450);
-      setTimeout(()=>AudioKit.win('jackpot'), 900);
-    }
-  }
-
+  if(soundOn) AudioKit.win(verdict.kind);
   confettiBurst();
-
-  if(verdict.kind==='jackpot'){
-    haloActive = true;
-    haloUntil = Date.now()+2600;
-    setTimeout(confettiBurst, 350);
-    setTimeout(confettiBurst, 700);
-  }
-
   hintEl.textContent = `Giro utilizado en ${activePC.label}`;
 
-  const histText = (verdict.details.length>0)
-    ? verdict.details.map(d=>`${d.line} (${d.kind} - ${d.symbol} - ${money(d.prize)})`).join(', ')
-    : 'Sin acierto';
+  const histText = (verdict.details.length>0) ? verdict.details.map(d=>`${d.line} (${d.kind})`).join(', ') : 'Sin acierto';
   pushHistory({ts, prize:prizeValue, text:histText});
   renderHistory();
 
